@@ -1,0 +1,25 @@
+# rapid-cdl-admin frontend stack.
+# Joins the shared external Docker network so nginx can reach the backend
+#
+# First-time setup (run once on the host):
+#   docker network create rapid-community-data-lab
+
+networks:
+  rapid-community-data-lab:
+    external: true
+    name: rapid-community-data-lab
+
+services:
+  admin:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: rapid-cdl-admin:local
+    container_name: admin
+    ports:
+      - "8082:80"
+    environment:
+      BACKEND_URL: "http://api:8080"
+    networks:
+      - rapid-community-data-lab
+    restart: unless-stopped
