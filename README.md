@@ -63,7 +63,8 @@ This builds `rapid-cdl-admin:local`, mounts the host `configuration.json` at
 ```bash
 curl -s http://localhost:8082/api/version            # proxied to backend
 curl -s http://localhost:8082/configuration.json     # served from host mount
-open http://localhost:8082                           # SPA in browser
+open http://localhost:8082                           # SPA in browser Mac
+explorer.exe http://localhost:8082                   # SPA in browser Windows WSL2
 ```
 
 You should see `{"version":"1.0.0"}` from the proxied backend call.
