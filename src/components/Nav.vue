@@ -7,7 +7,7 @@ import logo from '@/assets/logo.svg'
     <el-menu mode="horizontal" :ellipsis="false" class="nav">
       
       <el-menu-item index="home">
-        <a href="http://localhost:5173" class="nav-left">
+        <a href="/" class="nav-left">
           <img class="logo" :src="logo" />
           <span class="home-text">Home</span>
         </a>
