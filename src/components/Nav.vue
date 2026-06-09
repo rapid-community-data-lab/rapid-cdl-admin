@@ -9,7 +9,7 @@ import logo from '@/assets/logo.svg'
       <el-menu-item index="home">
         <a href="/" class="nav-left">
           <img class="logo" :src="logo" />
-          <span class="home-text">Home</span>
+          <span class="home-text">Home Test</span>
         </a>
       </el-menu-item>
 
