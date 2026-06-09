@@ -1,0 +1,35 @@
+---
+# rapid-cdl-admin — static Vue SPA served by Caddy.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rapid-cdl-admin
+  labels:
+    app: rapid-cdl-admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rapid-cdl-admin
+  template:
+    metadata:
+      labels:
+        app: rapid-cdl-admin
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: admin
+          image: rapid-cdl-admin            # rewritten by kustomization.yaml
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet: { path: /, port: 80 }
+            initialDelaySeconds: 5
+          livenessProbe:
+            httpGet: { path: /, port: 80 }
+            initialDelaySeconds: 15
+          resources:
+            requests: { cpu: 10m, memory: 16Mi }
+            limits: { cpu: 100m, memory: 64Mi }

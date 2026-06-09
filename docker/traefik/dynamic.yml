@@ -1,0 +1,19 @@
+---
+# Local-only Traefik dynamic config (file provider).
+http:
+  routers:
+    api:
+      rule: "PathPrefix(`/api`)"
+      entryPoints: ["web"]
+      service: api
+      middlewares: ["strip-api"]
+      priority: 100          # beats the admin catch-all (priority 1)
+  middlewares:
+    strip-api:
+      stripPrefix:
+        prefixes: ["/api"]
+  services:
+    api:
+      loadBalancer:
+        servers:
+          - url: "http://api:8080"

@@ -1,0 +1,33 @@
+---
+# Exposes rapid-cdl-admin on its OWN hostname (the shared rcdl host already
+# belongs to oni-ui + the API).
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: rapid-cdl-admin
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`rapid-cdl-admin-cb65eefe.nip.io`) && PathPrefix(`/api`)
+      kind: Rule
+      middlewares:
+        - name: rapid-cdl-admin-strip-api
+      services:
+        - name: rapid-community-data-lab-api
+          port: 8080
+    - match: Host(`rapid-cdl-admin-cb65eefe.nip.io`)
+      kind: Rule
+      services:
+        - name: rapid-cdl-admin
+          port: 80
+---
+# Strips /api so the backend sees /admin/repository, /version, etc.
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: rapid-cdl-admin-strip-api
+spec:
+  stripPrefix:
+    prefixes:
+      - /api

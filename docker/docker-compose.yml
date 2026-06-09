@@ -1,8 +1,13 @@
-# rapid-cdl-admin frontend stack.
-# Joins the shared external Docker network so nginx can reach the backend
+# rapid-cdl-admin frontend stack — mirrors the K3s architecture locally:
+# a Traefik edge routes /api → backend and everything else → the Caddy static
+# admin. The admin container no longer proxies /api (Traefik does), matching the
+# cluster exactly.
 #
 # First-time setup (run once on the host):
 #   docker network create rapid-community-data-lab
+# Bring up the backend first (postgres + opensearch + api) from
+# ../rapid-community-data-lab-api, then: docker compose -f docker/docker-compose.yml up -d --build
+# Open http://localhost:8082
 
 networks:
   rapid-community-data-lab:
@@ -10,16 +15,40 @@ networks:
     name: rapid-community-data-lab
 
 services:
+  traefik:
+    image: traefik:v3.3
+    container_name: rapid-cdl-traefik
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.file.filename=/etc/traefik/dynamic.yml
+      - --entrypoints.web.address=:80
+    ports:
+      # Same host port the old nginx admin used, so existing links keep working.
+      - "8082:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
+    networks:
+      - rapid-community-data-lab
+    restart: unless-stopped
+
   admin:
     build:
       context: ..
       dockerfile: docker/Dockerfile
+      args:
+        VITE_API_BASE_URL: "/api"
+        VITE_API_TOKEN: "${VITE_API_TOKEN:-}"
     image: rapid-cdl-admin:local
     container_name: admin
-    ports:
-      - "8082:80"
-    environment:
-      BACKEND_URL: "http://api:8080"
+    labels:
+      - traefik.enable=true
+      # Catch-all (lowest priority); the /api router below wins for /api/*.
+      - traefik.http.routers.admin.rule=PathPrefix(`/`)
+      - traefik.http.routers.admin.entrypoints=web
+      - traefik.http.routers.admin.priority=1
+      - traefik.http.services.admin.loadbalancer.server.port=80
     networks:
       - rapid-community-data-lab
     restart: unless-stopped

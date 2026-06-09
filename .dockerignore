@@ -1,0 +1,16 @@
+node_modules
+dist
+dist-ssr
+coverage
+.git
+.github
+.idea
+.vscode
+.env
+.env.*
+!.env.example
+*.log
+*.local
+*.tsbuildinfo
+.eslintcache
+.DS_Store

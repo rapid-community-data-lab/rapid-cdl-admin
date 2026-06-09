@@ -1,0 +1,20 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Deploy into the existing shared namespace (created by the infra repo, where
+# the API, oni-ui, opensearch and postgres already live). We do NOT recreate it.
+namespace: rcdl
+
+resources:
+  - deployment.yaml
+  - service.yaml
+  - ingressroute.yaml
+
+# Image override. The match key (name:) MUST equal the placeholder used in
+# deployment.yaml, or kustomize silently skips the rewrite → ImagePullBackOff.
+# Pin newTag to an immutable SHA for prod instead of "latest".
+images:
+  - name: rapid-cdl-admin
+    newName: ghcr.io/rapid-community-data-lab/rapid-cdl-admin
+    newTag: latest

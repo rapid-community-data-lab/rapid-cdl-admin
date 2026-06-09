@@ -1,0 +1,31 @@
+---
+# Argo CD Application for rapid-cdl-admin (GitOps pull deploy).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rapid-cdl-admin
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/rapid-community-data-lab/rapid-cdl-admin.git
+    targetRevision: main
+    path: k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: rcdl            # existing shared namespace; not created here
+  syncPolicy:
+    automated:
+      prune: true              # delete objects removed from git
+      selfHeal: true           # revert manual drift back to git state
+    syncOptions:
+      - CreateNamespace=false
+      - ApplyOutOfSyncOnly=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 2m

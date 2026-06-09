@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rapid-cdl-admin
+spec:
+  selector:
+    app: rapid-cdl-admin
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
