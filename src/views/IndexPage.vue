@@ -19,6 +19,8 @@ const statusMessage = ref('')
 const statusType = ref<'success' | 'error'>('success')
 const filterText = ref('')
 const treeRef = ref()
+const uploadUrl = ref('')
+const uploadLoading = ref(false)
 const getIndexedRepos = (): string[] => {
   const data = localStorage.getItem('indexedRepos')
   return data ? JSON.parse(data) : []
@@ -240,6 +242,50 @@ const deleteCollection = async (collectionId: string, collectionName: string) =>
   }
 }
 
+// Upload specific collection
+const uploadCollection = async () => {
+  statusMessage.value = ''
+
+  if (!uploadUrl.value) {
+    statusMessage.value = 'Please enter a ZIP URL'
+    statusType.value = 'error'
+    return
+  }
+
+  uploadLoading.value = true
+
+  try {
+    const response = await fetch(`${apiBase}/admin/upload`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        url: uploadUrl.value
+      })
+    })
+
+    if (!response.ok) {
+      throw new Error('Upload failed')
+    }
+
+    const result = await response.json()
+
+    statusMessage.value = result.message || 'Upload started'
+    statusType.value = 'success'
+
+    uploadUrl.value = ''
+  } catch (error) {
+    console.error(error)
+
+    statusMessage.value = 'Upload failed!'
+    statusType.value = 'error'
+  } finally {
+    uploadLoading.value = false
+  }
+}
+
 watch(filterText, (val) => {
   treeRef.value!.filter(val)
 })
@@ -270,6 +316,22 @@ const filterNode: FilterNodeMethodFunction = (value: string, data: TreeNodeData)
           Delete All
         </el-button>
       </div>
+    </div>
+
+    <div class="upload-bar">
+      <el-input
+        v-model="uploadUrl"
+        placeholder="Enter RO-Crate ZIP URL"
+        clearable
+      />
+
+      <el-button
+        type="primary"
+        :loading="uploadLoading"
+        @click="uploadCollection"
+      >
+        Upload
+      </el-button>
     </div>
 
     <p v-if="statusMessage" :style="{ color: statusType === 'success' ? 'green' : 'red', fontWeight: 'bold' }">
@@ -363,5 +425,11 @@ button {
 
 .el-button {
   min-width: 80px;
+}
+
+.upload-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 </style>
