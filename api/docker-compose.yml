@@ -1,0 +1,28 @@
+# First-time setup (run once on the host):
+#   docker network create rapid-community-data-lab
+# Bring up the backend first (postgres + opensearch + api) from
+# ../rapid-cdl-admin/api, then: docker compose -f docker-compose.yml up -d --build
+# Mac: Open http://localhost:8083 
+# WSL2: explorer.exe http://localhost:8083
+
+networks:
+  rapid-community-data-lab:
+    external: true
+    name: rapid-community-data-lab
+
+services:
+  admin-api:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rapid-cdl-admin-api:local
+    container_name: admin-api
+    hostname: admin-api
+    environment:
+      # Existing RAPID database
+      DATABASE_URL: "postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}"
+    ports:
+      - "8083:8083"
+    networks:
+      - rapid-community-data-lab
