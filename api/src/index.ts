@@ -15,6 +15,6 @@ app.get("/health", async () => {
 });
 
 app.listen({
-  port: Number(process.env.PORT ?? 3001),
+  port: Number(process.env.PORT),
   host: "0.0.0.0"
 });

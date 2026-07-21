@@ -24,7 +24,7 @@ COPY --from=build /app/src ./src
 COPY --from=build /app/package.json ./
 COPY --from=build /app/tsconfig.json ./
 
-EXPOSE 3001
+EXPOSE 8083
 
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["node", "src/index.ts"]
