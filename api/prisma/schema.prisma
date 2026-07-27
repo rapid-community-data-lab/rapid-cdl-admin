@@ -26,32 +26,4 @@ model AdminUser {
   enabled   Boolean   @default(true)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-
-  sessions  AdminSession[]
-  logs      AdminAuditLog[]
-}
-
-model AdminSession {
-  id        String   @id @default(uuid())
-  userId    Int
-  token     String   @unique
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-
-  user AdminUser @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([token])
-}
-
-model AdminAuditLog {
-  id        Int      @id @default(autoincrement())
-  userId    Int?
-  action    String
-  metadata  Json?
-  createdAt DateTime @default(now())
-
-  user AdminUser? @relation(fields: [userId], references: [id], onDelete: SetNull)
-
-  @@index([userId])
 }
