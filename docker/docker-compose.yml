@@ -6,7 +6,7 @@
 # First-time setup (run once on the host):
 #   docker network create rapid-community-data-lab
 # Bring up the backend first (postgres + opensearch + api) from
-# ../rapid-community-data-lab-api, then: docker compose -f docker/docker-compose.yml up -d --build
+# ../rapid-cdl-admin, then: docker compose -f docker/docker-compose.yml up -d --build
 # Mac: Open http://localhost:8082 
 # WSL2: explorer.exe http://localhost:8082
 
