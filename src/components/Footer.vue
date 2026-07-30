@@ -1,6 +1,6 @@
 <template>
   <div class="footer">
-    <span>© 2026 LDACA</span>
+    <span>© 2026 RAPID-CDL</span>
   </div>
 </template>
 
