@@ -6,7 +6,6 @@
   "type": "module",
   "scripts": {
     "dev": "node --env-file=.env --watch src/index.ts",
-    "migrate": "prisma migrate dev",
     "generate": "prisma generate"
   },
   "keywords": [],
