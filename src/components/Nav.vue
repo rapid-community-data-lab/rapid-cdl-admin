@@ -15,8 +15,12 @@ import logo from '@/assets/logo.svg'
 
       <div class="flex-grow" />
 
-      <el-menu-item index="admin" :route="'/'">
-          <span>Admin</span>
+      <el-menu-item index="signup">
+
+        <router-link to="/signup">
+          Sign Up
+        </router-link>
+
       </el-menu-item>
 
     </el-menu>

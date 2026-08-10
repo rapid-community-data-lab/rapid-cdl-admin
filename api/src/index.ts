@@ -3,6 +3,7 @@ import cors from "@fastify/cors";
 import dotenv from "dotenv";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "./generated/prisma/client.ts";
+import authRoutes from "./routes/auth.ts";
 
 dotenv.config();
 
@@ -17,6 +18,8 @@ const app = Fastify({ logger: true });
 await app.register(cors, {
   origin: true
 });
+
+await app.register(authRoutes);
 
 app.get("/health", async () => {
   return { status: "ok" };
