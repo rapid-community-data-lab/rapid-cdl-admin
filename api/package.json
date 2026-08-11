@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "node --env-file=.env --watch src/index.ts",
-    "generate": "prisma generate"
+    "generate": "prisma generate",
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
@@ -34,6 +35,7 @@
     "prisma": "^7.8.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.22.5",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
   }
 }
