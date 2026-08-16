@@ -23,6 +23,7 @@ services:
       # Existing RAPID database
       DATABASE_URL: "postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}"
       PORT: ${PORT}
+      API_AUTH_JWT_SECRET: ${API_AUTH_JWT_SECRET}
     ports:
       - "8083:8083"
     networks:
