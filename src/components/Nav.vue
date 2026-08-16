@@ -23,6 +23,12 @@ import logo from '@/assets/logo.svg'
 
       </el-menu-item>
 
+      <el-menu-item index="login">
+        <router-link to="/login">
+          Login
+        </router-link>
+      </el-menu-item>
+
     </el-menu>
   </div>
 </template>
