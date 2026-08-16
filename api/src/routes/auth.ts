@@ -5,15 +5,21 @@ import { prisma } from "../index.ts";
 export default async function authRoutes(app: FastifyInstance) {
 
   app.post("/signup", async (request, reply) => {
-
-    const { email, password } = request.body as {
+    const { email, password, role } = request.body as {
       email: string;
       password: string;
+      role: "ADMIN" | "SUPER_ADMIN";
     };
 
-    if (!email || !password) {
+    if (!email || !password || !role) {
       return reply.status(400).send({
-        message: "Email and password are required."
+        message: "Email, password and role are required."
+      });
+    }
+
+    if (role !== "ADMIN" && role !== "SUPER_ADMIN") {
+      return reply.status(400).send({
+        message: "Invalid role."
       });
     }
 
@@ -34,13 +40,15 @@ export default async function authRoutes(app: FastifyInstance) {
     const user = await prisma.adminUser.create({
       data: {
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        role
       }
     });
 
     return {
       id: user.id,
       email: user.email,
+      role: user.role,
       message: "Sign up successful."
     };
   });
