@@ -1,15 +1,23 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const email = ref("");
 const password = ref("");
 const role = ref<"ADMIN" | "SUPER_ADMIN">("ADMIN");
 
-async function signup() {
-  const response = await fetch("http://localhost:8083/signup", {
+async function createAdmin() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    router.push("/login");
+    return;
+  }
+  const response = await fetch("http://localhost:8083/create-admin", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
     },
     body: JSON.stringify({
       email: email.value,
@@ -17,15 +25,20 @@ async function signup() {
       role: role.value
     })
   });
-
   const data = await response.json();
+  if (!response.ok) {
+    alert(data.message);
+    return;
+  }
   alert(data.message);
+  router.push("/");
 }
 </script>
 
 <template>
   <el-card style="max-width:400px;margin:auto;">
-    <h2>Sign Up</h2>
+    <h2>Create New Admin</h2>
+
     <el-input
       v-model="email"
       placeholder="Email"
@@ -54,7 +67,7 @@ async function signup() {
     <br><br>
     <el-button
       type="primary"
-      @click="signup"
+      @click="createAdmin"
     >
       Create Account
     </el-button>

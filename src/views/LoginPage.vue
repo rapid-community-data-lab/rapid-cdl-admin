@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { login as saveLogin } from "@/auth";
 
+const router = useRouter();
 const email = ref("");
 const password = ref("");
 
@@ -20,8 +23,9 @@ async function login() {
     alert(data.message);
     return;
   }
-  localStorage.setItem("token", data.token);
+  saveLogin(data.token, data.user.role);
   alert(data.message);
+  router.push("/");
 }
 </script>
 

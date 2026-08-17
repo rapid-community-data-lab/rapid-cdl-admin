@@ -1,32 +1,57 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import logo from '@/assets/logo.svg'
+import {
+  isLoggedIn,
+  isSuperAdmin,
+  logout as clearAuth
+} from '@/auth'
+
+const router = useRouter()
+
+function logout() {
+  clearAuth()
+  router.push('/login')
+}
 </script>
 
 <template>
   <div class="nav-wrapper">
     <el-menu mode="horizontal" :ellipsis="false" class="nav">
-      
+
       <el-menu-item index="home">
-        <a href="/" class="nav-left">
+        <router-link to="/" class="nav-left">
           <img class="logo" :src="logo" />
-          <span class="home-text">Home</span>
-        </a>
+          <span class="nav-text">Home</span>
+        </router-link>
       </el-menu-item>
 
       <div class="flex-grow" />
 
-      <el-menu-item index="signup">
-
-        <router-link to="/signup">
-          Sign Up
+      <!-- Not logged in -->
+      <el-menu-item v-if="!isLoggedIn" index="login">
+        <router-link to="/login" class="nav-left">
+          <span class="nav-text">Login</span>
         </router-link>
-
       </el-menu-item>
 
-      <el-menu-item index="login">
-        <router-link to="/login">
-          Login
+      <!-- Super admin only -->
+      <el-menu-item
+        v-if="isLoggedIn && isSuperAdmin"
+        index="create-admin"
+      >
+        <router-link to="/create-admin" class="nav-left">
+          <span class="nav-text">Create Admin</span>
         </router-link>
+      </el-menu-item>
+
+      <!-- Logged in users -->
+      <el-menu-item
+        v-if="isLoggedIn"
+        index="logout"
+        @click="logout"
+      >
+        <span class="nav-text">Logout</span>
       </el-menu-item>
 
     </el-menu>
@@ -55,7 +80,7 @@ import logo from '@/assets/logo.svg'
   height: 28px;
 }
 
-.home-text {
+.nav-text {
   font-size: 14px;
   color: #409eff;
 }

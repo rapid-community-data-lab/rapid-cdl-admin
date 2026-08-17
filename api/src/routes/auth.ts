@@ -1,11 +1,48 @@
-import type { FastifyInstance } from "fastify";
+import type { FastifyInstance, FastifyRequest } from "fastify";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { prisma } from "../index.ts";
 
+function getUserFromToken(request: FastifyRequest) {
+  const authorization = request.headers.authorization;
+
+  if (!authorization) {
+    return null;
+  }
+
+  const token = authorization.replace("Bearer ", "");
+
+  try {
+    return jwt.verify(
+      token,
+      process.env.API_AUTH_JWT_SECRET!
+    ) as {
+      id: string;
+      email: string;
+      role: "ADMIN" | "SUPER_ADMIN";
+    };
+  } catch {
+    return null;
+  }
+}
+
 export default async function authRoutes(app: FastifyInstance) {
 
-  app.post("/signup", async (request, reply) => {
+  app.post("/create-admin", async (request, reply) => {
+    const currentUser = getUserFromToken(request);
+
+    if (!currentUser) {
+      return reply.status(401).send({
+        message: "You must be logged in."
+      });
+    }
+
+    if (currentUser.role !== "SUPER_ADMIN") {
+      return reply.status(403).send({
+        message: "Only super admins can create accounts."
+      });
+    }
+
     const { email, password, role } = request.body as {
       email: string;
       password: string;
@@ -50,7 +87,7 @@ export default async function authRoutes(app: FastifyInstance) {
       id: user.id,
       email: user.email,
       role: user.role,
-      message: "Sign up successful."
+      message: "Created new admin successful."
     };
   });
 
