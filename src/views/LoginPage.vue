@@ -3,12 +3,14 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { login as saveLogin } from "@/auth";
 
+const apiBase = import.meta.env.VITE_ADMIN_API_BASE_URL;
 const router = useRouter();
 const email = ref("");
 const password = ref("");
 
 async function login() {
-  const response = await fetch("http://localhost:8083/login", {
+  // const response = await fetch("http://localhost:8083/login", {
+  const response = await fetch(`${apiBase}/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

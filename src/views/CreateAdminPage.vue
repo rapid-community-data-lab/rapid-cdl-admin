@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
+const apiBase = import.meta.env.VITE_ADMIN_API_BASE_URL;
 const router = useRouter();
 const email = ref("");
 const password = ref("");
@@ -13,7 +14,8 @@ async function createAdmin() {
     router.push("/login");
     return;
   }
-  const response = await fetch("http://localhost:8083/create-admin", {
+  // const response = await fetch("http://localhost:8083/create-admin", {
+  const response = await fetch(`${apiBase}/create-admin`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
