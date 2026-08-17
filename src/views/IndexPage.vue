@@ -271,9 +271,9 @@ const filterNode: FilterNodeMethodFunction = (value: string, data: TreeNodeData)
           Index All
         </el-button>
 
-        <!-- <el-button type="danger" @click="deleteAll">
+        <el-button type="danger" @click="deleteAll">
           Delete All
-        </el-button> -->
+        </el-button>
       </div>
     </div>
 
@@ -297,9 +297,9 @@ const filterNode: FilterNodeMethodFunction = (value: string, data: TreeNodeData)
                 {{ data.indexed ? 'Indexed' : 'Index' }}
               </el-button>
 
-              <!-- <el-button type="danger" @click.stop="deleteCollection(data.id, data.name)" >
+              <el-button type="danger" @click.stop="deleteCollection(data.id, data.name)" >
                 Delete
-              </el-button> -->
+              </el-button>
             </span>
           </div>
         </template>
