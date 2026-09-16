@@ -4,7 +4,13 @@ import { env, loadEnvFile } from 'node:process';
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
-loadEnvFile(".env");
+try {
+  loadEnvFile(".env");
+} catch (error) {
+  if (!(error instanceof Error) || !("code" in error) || error.code !== "ENOENT") {
+    throw error;
+  }
+}
 
 export default defineConfig({
   schema: "prisma/schema.prisma",

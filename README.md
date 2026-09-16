@@ -3,8 +3,8 @@
 > **Deploying to the K3s cluster on Nectar OpenStack?** See
 > [`DEPLOYMENT.md`](DEPLOYMENT.md) — a GitOps guide: push to `main`, **GitHub
 > Actions** builds + pushes the image, **Argo CD** auto-syncs it to K3s. Also
-> covers connecting to OpenStack, creating a Nectar keypair, and generating a
-> secure `VITE_API_TOKEN`.
+> covers connecting to OpenStack, creating a Nectar keypair, and configuring the
+> shared `API_AUTH_JWT_SECRET` in both backend services.
 
 ## Run with Docker (production-like)
 
@@ -23,12 +23,12 @@ so the same image runs locally and on K3s unchanged.
 
 - Docker 24+ and Docker Compose v2
 - The backend repo cloned at `../rapid-community-data-lab-api`
-- (Optional) export `VITE_API_TOKEN` before building so the admin bearer token is
-  baked into the local bundle:
-
-   ```bash
-   export VITE_API_TOKEN='<dev-token>'
-   ```
+- Set the same `API_AUTH_JWT_SECRET` value in the admin API and lab-api
+  environments. Users receive their bearer token from `/login`.
+- For local Docker, set `VITE_ADMIN_API_BASE_URL` in `.env` to the browser-
+  reachable admin API URL, for example `http://localhost:8083`.
+- For CI/deployment, set the GitHub Actions variable `ADMIN_API_BASE_URL` to
+  the browser-reachable URL of the admin API.
 
 ### 2. Create the shared Docker network (one-time)
 
@@ -55,7 +55,7 @@ curl -s http://localhost:8080/version
 
 ```bash
 cd ../rapid-cdl-admin
-docker compose -f docker/docker-compose.yml up -d --build
+docker compose --env-file .env -f docker/docker-compose.yml up -d --build
 ```
 
 This builds `rapid-cdl-admin:local` (Caddy static SPA) and starts a local Traefik

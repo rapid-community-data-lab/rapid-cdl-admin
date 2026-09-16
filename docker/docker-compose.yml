@@ -5,8 +5,9 @@
 #
 # First-time setup (run once on the host):
 #   docker network create rapid-community-data-lab
-# Bring up the backend first (postgres + opensearch + api) from
-# ../rapid-cdl-admin, then: docker compose -f docker/docker-compose.yml up -d --build
+# Bring up the backend first (postgres + opensearch + api), then run from the
+# repository root: docker compose --env-file .env -f docker/docker-compose.yml up -d --build
+# If running from this directory instead, use: docker compose --env-file ../.env up -d --build
 # Mac: Open http://localhost:8082 
 # WSL2: explorer.exe http://localhost:8082
 
@@ -40,7 +41,7 @@ services:
       dockerfile: docker/Dockerfile
       args:
         VITE_API_BASE_URL: "/api"
-        VITE_API_TOKEN: "${VITE_API_TOKEN:-}"
+        VITE_ADMIN_API_BASE_URL: "${VITE_ADMIN_API_BASE_URL:?Set VITE_ADMIN_API_BASE_URL in .env}"
     image: rapid-cdl-admin:local
     container_name: admin
     labels:
