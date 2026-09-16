@@ -52,7 +52,7 @@ jobs:
             ${{ steps.img.outputs.name }}:latest
           build-args: |
             VITE_API_BASE_URL=/api
-            VITE_API_TOKEN=${{ secrets.VITE_API_TOKEN }}
+            VITE_ADMIN_API_BASE_URL=${{ vars.ADMIN_API_BASE_URL }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

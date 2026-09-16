@@ -6,6 +6,7 @@ COPY package.json package-lock.json ./
 RUN npm install --no-audit --no-fund
 
 COPY prisma ./prisma
+COPY prisma.config.ts ./
 COPY tsconfig.json ./
 COPY src ./src
 
@@ -20,11 +21,14 @@ RUN apk add --no-cache tini
 
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/prisma.config.ts ./
 COPY --from=build /app/src ./src
 COPY --from=build /app/package.json ./
 COPY --from=build /app/tsconfig.json ./
+COPY docker/entrypoint.sh /entrypoint.sh
+COPY docker/ensure-schema.mjs /app/ensure-schema.mjs
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 8083
 
-ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["node", "src/index.ts"]
+ENTRYPOINT ["/sbin/tini", "--", "/entrypoint.sh"]

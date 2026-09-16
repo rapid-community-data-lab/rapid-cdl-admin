@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FilterNodeMethodFunction, TreeNodeData } from 'element-plus'
 import { ElInput, ElTree } from 'element-plus'
+import { getToken } from '@/auth'
 import { ref, watch } from 'vue'
 
 interface Collection extends TreeNodeData {
@@ -12,11 +13,11 @@ interface Collection extends TreeNodeData {
 }
 
 const apiBase = import.meta.env.VITE_API_BASE_URL
-const apiKey = import.meta.env.VITE_API_TOKEN
 
-// console.log("API BASE =", apiBase)
-// console.log("API TOKEN =", apiKey)
-// console.log(import.meta.env)
+const authHeaders = (): Record<string, string> => {
+  const token = getToken()
+  return token ? { 'Authorization': `Bearer ${token}` } : {}
+}
 
 const collections = ref<Collection[]>([])
 const errorMessage = ref('')
@@ -69,9 +70,7 @@ const fetchCollections = async () => {
   try {
     const response = await fetch(`${apiBase}/admin/repository`, {
       method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`
-      }
+      headers: authHeaders()
     })
 
     if (!response.ok) {
@@ -86,7 +85,7 @@ const fetchCollections = async () => {
     // }))
 
     collections.value = buildTree(data)
-  } catch (error) {
+  } catch {
     errorMessage.value = 'Failed to fetch collections'
     statusType.value = 'success'
   }
@@ -116,9 +115,7 @@ const indexAll = async () => {
   try {
     const response = await fetch(`${apiBase}/admin/index/`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`
-      }
+      headers: authHeaders()
     })
 
     if (!response.ok) {
@@ -133,7 +130,7 @@ const indexAll = async () => {
     statusMessage.value = 'Indexing succeeded!'
     statusType.value = 'success'
     collections.value.forEach(c => c.indexed = true)
-  } catch (error) {
+  } catch {
     statusMessage.value = 'Indexing failed!'
     statusType.value = 'error'
   }
@@ -147,9 +144,7 @@ const deleteAll = async () => {
   try {
     const response = await fetch(`${apiBase}/admin/index/`, {
       method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`
-      }
+      headers: authHeaders()
     })
 
     if (!response.ok) {
@@ -162,7 +157,7 @@ const deleteAll = async () => {
     saveIndexedRepos([])
     statusMessage.value = 'All indexes deleted successfully!'
     statusType.value = 'success'
-  } catch (error) {
+  } catch {
     statusMessage.value = 'Delete failed!'
     statusType.value = 'error'
   }
@@ -188,9 +183,7 @@ const indexCollection = async (collectionId: string, collectionName: string) => 
   try {
     const response = await fetch(`${apiBase}/admin/index/${encodeURIComponent(collectionId)}`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`
-      }
+      headers: authHeaders()
     })
 
     if (!response.ok) {
@@ -206,7 +199,7 @@ const indexCollection = async (collectionId: string, collectionName: string) => 
       const allIds = getAllIds(collection)
       saveIndexedRepos([...indexedRepos, ...allIds])
     }
-  } catch (error) {
+  } catch {
     statusMessage.value = `Indexing failed for ${collectionName}!`
     statusType.value = 'error'
   }
@@ -220,9 +213,7 @@ const deleteCollection = async (collectionId: string, collectionName: string) =>
   try {
     const response = await fetch(`${apiBase}/admin/index/${encodeURIComponent(collectionId)}`, {
       method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`
-      }
+      headers: authHeaders()
     })
 
     if (!response.ok) {
@@ -239,7 +230,7 @@ const deleteCollection = async (collectionId: string, collectionName: string) =>
       saveIndexedRepos(indexedRepos)
     }
 
-  } catch (error) {
+  } catch {
     statusMessage.value = `Delete failed for ${collectionName}!`
     statusType.value = 'error'
   }
@@ -271,9 +262,9 @@ const filterNode: FilterNodeMethodFunction = (value: string, data: TreeNodeData)
           Index All
         </el-button>
 
-        <!-- <el-button type="danger" @click="deleteAll">
+        <el-button type="danger" @click="deleteAll">
           Delete All
-        </el-button> -->
+        </el-button>
       </div>
     </div>
 
@@ -297,9 +288,9 @@ const filterNode: FilterNodeMethodFunction = (value: string, data: TreeNodeData)
                 {{ data.indexed ? 'Indexed' : 'Index' }}
               </el-button>
 
-              <!-- <el-button type="danger" @click.stop="deleteCollection(data.id, data.name)" >
+              <el-button type="danger" @click.stop="deleteCollection(data.id, data.name)" >
                 Delete
-              </el-button> -->
+              </el-button>
             </span>
           </div>
         </template>
