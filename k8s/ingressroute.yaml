@@ -13,7 +13,7 @@ spec:
       kind: Rule
       priority: 30
       middlewares:
-        - rapid-cdl-admin-strip-admin-api
+        - strip-admin-api
       services:
         - name: rapid-cdl-admin-api
           port: 8083
@@ -43,7 +43,7 @@ spec:
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: rapid-cdl-admin-strip-admin-api
+  name: strip-admin-api
 spec:
   stripPrefix:
     prefixes:
