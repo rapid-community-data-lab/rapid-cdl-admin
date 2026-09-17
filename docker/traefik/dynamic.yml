@@ -2,6 +2,12 @@
 # Local-only Traefik dynamic config (file provider).
 http:
   routers:
+    admin-api:
+      rule: "PathPrefix(`/admin-api`)"
+      entryPoints: ["web"]
+      service: admin-api
+      middlewares: ["strip-admin-api"]
+      priority: 110
     api:
       rule: "PathPrefix(`/api`)"
       entryPoints: ["web"]
@@ -9,10 +15,17 @@ http:
       middlewares: ["strip-api"]
       priority: 100          # beats the admin catch-all (priority 1)
   middlewares:
+    strip-admin-api:
+      stripPrefix:
+        prefixes: ["/admin-api"]
     strip-api:
       stripPrefix:
         prefixes: ["/api"]
   services:
+    admin-api:
+      loadBalancer:
+        servers:
+          - url: "http://admin-api:8083"
     api:
       loadBalancer:
         servers:

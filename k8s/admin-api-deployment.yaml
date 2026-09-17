@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rapid-cdl-admin-api
+  labels:
+    app: rapid-cdl-admin-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rapid-cdl-admin-api
+  template:
+    metadata:
+      labels:
+        app: rapid-cdl-admin-api
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      enableServiceLinks: false
+      containers:
+        - name: admin-api
+          image: rapid-cdl-admin-api
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8083
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "8083"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: api
+                  key: DATABASE_URL
+            - name: API_AUTH_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: api
+                  key: TOKEN_ADMIN
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8083
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8083
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

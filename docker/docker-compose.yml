@@ -41,7 +41,7 @@ services:
       dockerfile: docker/Dockerfile
       args:
         VITE_API_BASE_URL: "/api"
-        VITE_ADMIN_API_BASE_URL: "${VITE_ADMIN_API_BASE_URL:?Set VITE_ADMIN_API_BASE_URL in .env}"
+        VITE_ADMIN_API_BASE_URL: "/admin-api"
     image: rapid-cdl-admin:local
     container_name: admin
     labels:

@@ -53,7 +53,20 @@ jobs:
             ${{ steps.img.outputs.name }}:latest
           build-args: |
             VITE_API_BASE_URL=/api
-            VITE_ADMIN_API_BASE_URL=${{ vars.ADMIN_API_BASE_URL }}
+            VITE_ADMIN_API_BASE_URL=/admin-api
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push admin API
+        uses: docker/build-push-action@v6
+        with:
+          context: ./api
+          file: ./api/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ghcr.io/rapid-community-data-lab/rapid-cdl-admin-api:${{ steps.img.outputs.tag }}
+            ghcr.io/rapid-community-data-lab/rapid-cdl-admin-api:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -67,6 +80,8 @@ jobs:
         run: |
           kustomize edit set image \
             "rapid-cdl-admin=${{ steps.img.outputs.name }}:${{ steps.img.outputs.tag }}"
+          kustomize edit set image \
+            "rapid-cdl-admin-api=ghcr.io/rapid-community-data-lab/rapid-cdl-admin-api:${{ steps.img.outputs.tag }}"
 
       - name: Commit the tag bump (triggers Argo CD)
         run: |
