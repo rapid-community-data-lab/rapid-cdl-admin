@@ -9,14 +9,22 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`rapid-cdl-admin-cb65eefe.nip.io`) && PathPrefix(`/api`)
+    - match: Host(`admin.rapid-cdl.edu.au`) && PathPrefix(`/admin-api`)
+      kind: Rule
+      priority: 30
+      middlewares:
+        - strip-admin-api
+      services:
+        - name: rapid-cdl-admin-api
+          port: 8083
+    - match: Host(`admin.rapid-cdl.edu.au`) && PathPrefix(`/api`)
       kind: Rule
       middlewares:
         - name: rapid-cdl-admin-strip-api
       services:
         - name: rapid-community-data-lab-api
           port: 8080
-    - match: Host(`rapid-cdl-admin-cb65eefe.nip.io`)
+    - match: Host(`admin.rapid-cdl.edu.au`)
       kind: Rule
       services:
         - name: rapid-cdl-admin
@@ -31,3 +39,12 @@ spec:
   stripPrefix:
     prefixes:
       - /api
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-admin-api
+spec:
+  stripPrefix:
+    prefixes:
+      - /admin-api

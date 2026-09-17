@@ -25,10 +25,8 @@ so the same image runs locally and on K3s unchanged.
 - The backend repo cloned at `../rapid-community-data-lab-api`
 - Set the same `API_AUTH_JWT_SECRET` value in the admin API and lab-api
   environments. Users receive their bearer token from `/login`.
-- For local Docker, set `VITE_ADMIN_API_BASE_URL` in `.env` to the browser-
-  reachable admin API URL, for example `http://localhost:8083`.
-- For CI/deployment, set the GitHub Actions variable `ADMIN_API_BASE_URL` to
-  the browser-reachable URL of the admin API.
+- The UI calls admin authentication through the same-origin `/admin-api` path.
+  Local Traefik and production Kubernetes route this path to admin-api.
 
 ### 2. Create the shared Docker network (one-time)
 
@@ -49,6 +47,10 @@ Both `docker/docker-compose.yml` (this project) and
 cd ../rapid-community-data-lab-api
 docker compose up -d        # postgres + opensearch + api
 curl -s http://localhost:8080/version
+
+# In another terminal, start the admin API on the shared Docker network.
+cd ../rapid-cdl-admin/api
+docker compose up -d --build
 ```
 
 ### 4. Build and start the frontend
@@ -59,13 +61,14 @@ docker compose --env-file .env -f docker/docker-compose.yml up -d --build
 ```
 
 This builds `rapid-cdl-admin:local` (Caddy static SPA) and starts a local Traefik
-that publishes on host port **8082**, routing `/api/*` to the backend and `/` to
-the admin.
+that publishes on host port **8082**, routing `/api/*` to lab-api,
+`/admin-api/*` to admin-api, and `/` to the admin.
 
 ### 5. Verify
 
 ```bash
 curl -s http://localhost:8082/api/version            # Traefik → backend
+curl -s http://localhost:8082/admin-api/health       # Traefik → admin-api
 curl -s -o /dev/null -w '%{http_code}\n' http://localhost:8082/   # SPA → 200
 open http://localhost:8082                           # SPA in browser Mac
 explorer.exe http://localhost:8082                   # SPA in browser Windows WSL2

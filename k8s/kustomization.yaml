@@ -8,6 +8,8 @@ namespace: rcdl
 resources:
 - deployment.yaml
 - service.yaml
+- admin-api-deployment.yaml
+- admin-api-service.yaml
 - ingressroute.yaml
 
 # Image override. The match key (name:) MUST equal the placeholder used in
@@ -16,4 +18,7 @@ resources:
 images:
 - name: rapid-cdl-admin
   newName: ghcr.io/rapid-community-data-lab/rapid-cdl-admin
+  newTag: sha-fbbcf95
+- name: rapid-cdl-admin-api
+  newName: ghcr.io/rapid-community-data-lab/rapid-cdl-admin-api
   newTag: sha-fbbcf95

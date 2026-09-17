@@ -52,7 +52,20 @@ jobs:
             ${{ steps.img.outputs.name }}:latest
           build-args: |
             VITE_API_BASE_URL=/api
-            VITE_ADMIN_API_BASE_URL=${{ vars.ADMIN_API_BASE_URL }}
+            VITE_ADMIN_API_BASE_URL=/admin-api
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push admin API
+        uses: docker/build-push-action@v6
+        with:
+          context: ./api
+          file: ./api/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ghcr.io/rapid-community-data-lab/rapid-cdl-admin-api:${{ steps.img.outputs.tag }}
+            ghcr.io/rapid-community-data-lab/rapid-cdl-admin-api:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -68,3 +81,28 @@ jobs:
               "image": "${{ steps.img.outputs.name }}",
               "tag": "${{ steps.img.outputs.tag }}"
             }
+
+      - name: Install kustomize
+        run: |
+          curl -fsSL "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
+
+      - name: Pin image tag in k8s/kustomization.yaml
+        working-directory: k8s
+        run: |
+          kustomize edit set image \
+            "rapid-cdl-admin=${{ steps.img.outputs.name }}:${{ steps.img.outputs.tag }}"
+          kustomize edit set image \
+            "rapid-cdl-admin-api=ghcr.io/rapid-community-data-lab/rapid-cdl-admin-api:${{ steps.img.outputs.tag }}"
+
+      - name: Commit the tag bump (triggers Argo CD)
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- k8s/kustomization.yaml; then
+            echo "No image change; nothing to commit."
+            exit 0
+          fi
+          git add k8s/kustomization.yaml
+          git commit -m "ci: deploy ${{ steps.img.outputs.tag }} [skip ci]"
+          git push origin HEAD:main
