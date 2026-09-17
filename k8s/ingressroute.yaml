@@ -9,7 +9,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`rapid-cdl-admin-cb65eefe.nip.io`) && PathPrefix(`/admin-api`)
+    - match: Host(`admin.rapid-cdl.edu.au`) && PathPrefix(`/admin-api`)
       kind: Rule
       priority: 30
       middlewares:
@@ -17,14 +17,14 @@ spec:
       services:
         - name: rapid-cdl-admin-api
           port: 8083
-    - match: Host(`rapid-cdl-admin-cb65eefe.nip.io`) && PathPrefix(`/api`)
+    - match: Host(`admin.rapid-cdl.edu.au`) && PathPrefix(`/api`)
       kind: Rule
       middlewares:
         - name: rapid-cdl-admin-strip-api
       services:
         - name: rapid-community-data-lab-api
           port: 8080
-    - match: Host(`rapid-cdl-admin-cb65eefe.nip.io`)
+    - match: Host(`admin.rapid-cdl.edu.au`)
       kind: Rule
       services:
         - name: rapid-cdl-admin
