@@ -53,6 +53,10 @@ cd ../rapid-cdl-admin/api
 docker compose up -d --build
 ```
 
+The `admin-api` container is attached to the shared
+`rapid-community-data-lab` network, is available as hostname `admin-api`, and
+publishes host port `8083`. It provides authentication APIs only.
+
 ### 4. Build and start the frontend
 
 ```bash
@@ -68,7 +72,8 @@ that publishes on host port **8082**, routing `/api/*` to lab-api,
 
 ```bash
 curl -s http://localhost:8082/api/version            # Traefik → backend
-curl -s http://localhost:8082/admin-api/health       # Traefik → admin-api
+curl -s http://localhost:8083/health                  # Direct → admin-api
+curl -s http://localhost:8082/admin-api/health        # Traefik → admin-api
 curl -s -o /dev/null -w '%{http_code}\n' http://localhost:8082/   # SPA → 200
 open http://localhost:8082                           # SPA in browser Mac
 explorer.exe http://localhost:8082                   # SPA in browser Windows WSL2
@@ -80,7 +85,8 @@ You should see `{"version":"1.0.0"}` from the backend call routed through Traefi
 
 ```bash
 docker compose -f docker/docker-compose.yml down
-cd ../rapid-community-data-lab-api && docker compose down
+cd ../rapid-cdl-admin/docker && docker compose down
+cd ../rapid-cdl-admin/api/ && docker compose down
 # Optional: remove the shared network
 docker network rm rapid-community-data-lab
 ```
