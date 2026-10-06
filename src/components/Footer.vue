@@ -11,6 +11,6 @@
   align-items: center;
   justify-content: center;
   background: #f5f5f5;
-  color: #666;
+  color: #3e0323;
 }
 </style>

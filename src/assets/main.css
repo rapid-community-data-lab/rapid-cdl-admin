@@ -1,0 +1,21 @@
+:root {
+  --rapid-text-color: #3e0323;
+  --el-font-family: "Times New Roman", Times, serif;
+  --el-text-color-primary: var(--rapid-text-color);
+  --el-text-color-regular: var(--rapid-text-color);
+  --el-text-color-secondary: var(--rapid-text-color);
+}
+
+html,
+body,
+#app,
+button,
+input,
+textarea,
+select {
+  font-family: "Times New Roman", Times, serif;
+}
+
+body {
+  color: var(--rapid-text-color);
+}
