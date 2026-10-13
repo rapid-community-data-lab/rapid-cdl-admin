@@ -14,3 +14,15 @@ body * {
 body {
   color: var(--rapid-text-color);
 }
+
+.el-button {
+  color: var(--rapid-text-color);
+  font-family: "Times New Roman", Times, serif;
+}
+
+.el-button.is-disabled,
+.el-button.is-disabled:hover {
+  background-color: #d1d5db;
+  border-color: #d1d5db;
+  color: #4b5563;
+}
