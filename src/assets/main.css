@@ -1,0 +1,28 @@
+:root {
+  --rapid-text-color: #3e0323;
+  --el-font-family: "Times New Roman", Times, serif;
+  --el-text-color-primary: var(--rapid-text-color);
+  --el-text-color-regular: var(--rapid-text-color);
+  --el-text-color-secondary: var(--rapid-text-color);
+}
+
+body,
+body * {
+  font-family: "Times New Roman", Times, serif;
+}
+
+body {
+  color: var(--rapid-text-color);
+}
+
+.el-button {
+  color: var(--rapid-text-color);
+  font-family: "Times New Roman", Times, serif;
+}
+
+.el-button.is-disabled,
+.el-button.is-disabled:hover {
+  background-color: #d1d5db;
+  border-color: #d1d5db;
+  color: #4b5563;
+}

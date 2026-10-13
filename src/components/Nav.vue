@@ -82,7 +82,7 @@ function logout() {
 
 .nav-text {
   font-size: 14px;
-  color: #409eff;
+  color: #3e0323;
 }
 
 .flex-grow {

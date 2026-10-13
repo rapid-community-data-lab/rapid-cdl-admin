@@ -284,11 +284,19 @@ const filterNode: FilterNodeMethodFunction = (value: string, data: TreeNodeData)
             </span>
 
             <span class="tree-actions">
-              <el-button type="success" @click.stop="indexCollection(data.id, data.name)" >
+              <el-button
+                type="success"
+                :disabled="data.indexed"
+                @click.stop="indexCollection(data.id, data.name)"
+              >
                 {{ data.indexed ? 'Indexed' : 'Index' }}
               </el-button>
 
-              <el-button type="danger" @click.stop="deleteCollection(data.id, data.name)" >
+              <el-button
+                type="danger"
+                :disabled="!data.indexed"
+                @click.stop="deleteCollection(data.id, data.name)"
+              >
                 Delete
               </el-button>
             </span>
@@ -360,4 +368,5 @@ button {
 .el-button {
   min-width: 80px;
 }
+
 </style>
