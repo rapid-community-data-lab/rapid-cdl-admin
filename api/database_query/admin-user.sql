@@ -1,13 +1,13 @@
 CREATE TYPE "AdminRole" AS ENUM (
-    'ADMIN',
-    'SUPER_ADMIN'
+    'INDEX_ADMIN',
+    'ROLES_ADMIN'
 );
 
 CREATE TABLE "admin_users" (
     id SERIAL PRIMARY KEY,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    role "AdminRole" NOT NULL DEFAULT 'ADMIN',
+    role "AdminRole" NOT NULL DEFAULT 'INDEX_ADMIN',
     enabled BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL

@@ -32,7 +32,7 @@ describe("POST /login", () => {
     mockCompare.mockResolvedValue(true);
   });
 
-  it.each(["ADMIN", "SUPER_ADMIN"] as const)("returns a usable %s JWT", async (role) => {
+  it.each(["INDEX_ADMIN", "ROLES_ADMIN"] as const)("returns a usable %s JWT", async (role) => {
     mockPrisma.adminUser.findUnique.mockResolvedValue({
       id: 1,
       email: `${role.toLowerCase()}@example.com`,
