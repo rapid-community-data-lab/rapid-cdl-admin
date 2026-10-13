@@ -6,13 +6,8 @@
   --el-text-color-secondary: var(--rapid-text-color);
 }
 
-html,
 body,
-#app,
-button,
-input,
-textarea,
-select {
+body * {
   font-family: "Times New Roman", Times, serif;
 }
 
