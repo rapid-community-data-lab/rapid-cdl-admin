@@ -18,7 +18,7 @@ resources:
 images:
 - name: rapid-cdl-admin
   newName: ghcr.io/rapid-community-data-lab/rapid-cdl-admin
-  newTag: sha-d816ee3
+  newTag: sha-82a16b5
 - name: rapid-cdl-admin-api
   newName: ghcr.io/rapid-community-data-lab/rapid-cdl-admin-api
-  newTag: sha-d816ee3
+  newTag: sha-82a16b5
