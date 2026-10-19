@@ -11,6 +11,7 @@ const client = new Client({ connectionString });
 
 try {
   await client.connect();
+  // TODO: Convert it to Prisma ORM in the future
   await client.query(`
     DO $$
     DECLARE
