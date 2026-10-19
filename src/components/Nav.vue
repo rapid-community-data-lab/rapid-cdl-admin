@@ -3,7 +3,7 @@ import { useRouter } from 'vue-router'
 import logo from '@/assets/logo.svg'
 import {
   isLoggedIn,
-  isSuperAdmin,
+  isRolesAdmin,
   logout as clearAuth
 } from '@/auth'
 
@@ -35,13 +35,13 @@ function logout() {
         </router-link>
       </el-menu-item>
 
-      <!-- Super admin only -->
+      <!-- Roles Admin only -->
       <el-menu-item
-        v-if="isLoggedIn && isSuperAdmin"
+        v-if="isLoggedIn && isRolesAdmin"
         index="create-admin"
       >
         <router-link to="/create-admin" class="nav-left">
-          <span class="nav-text">Create Admin</span>
+          <span class="nav-text">Create Index Admin</span>
         </router-link>
       </el-menu-item>
 

@@ -19,7 +19,7 @@ function getUserFromToken(request: FastifyRequest) {
     ) as {
       id: string;
       email: string;
-      role: "ADMIN" | "SUPER_ADMIN";
+      role: "INDEX_ADMIN" | "ROLES_ADMIN";
     };
   } catch {
     return null;
@@ -37,16 +37,16 @@ export default async function authRoutes(app: FastifyInstance) {
       });
     }
 
-    if (currentUser.role !== "SUPER_ADMIN") {
+    if (currentUser.role !== "ROLES_ADMIN") {
       return reply.status(403).send({
-        message: "Only super admins can create accounts."
+        message: "Only Roles Admins can create accounts."
       });
     }
 
     const { email, password, role } = request.body as {
       email: string;
       password: string;
-      role: "ADMIN" | "SUPER_ADMIN";
+      role: "INDEX_ADMIN" | "ROLES_ADMIN";
     };
 
     if (!email || !password || !role) {
@@ -55,7 +55,7 @@ export default async function authRoutes(app: FastifyInstance) {
       });
     }
 
-    if (role !== "ADMIN" && role !== "SUPER_ADMIN") {
+    if (role !== "INDEX_ADMIN" && role !== "ROLES_ADMIN") {
       return reply.status(400).send({
         message: "Invalid role."
       });
@@ -87,7 +87,7 @@ export default async function authRoutes(app: FastifyInstance) {
       id: user.id,
       email: user.email,
       role: user.role,
-      message: "Created new admin successful."
+      message: "Created new account successfully."
     };
   });
 

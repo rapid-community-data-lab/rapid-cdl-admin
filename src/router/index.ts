@@ -18,7 +18,7 @@ const routes = [
     component: CreateAdminPage,
     meta: {
       requiresAuth: true,
-      requiresSuperAdmin: true,
+      requiresRolesAdmin: true,
     },
   },
   {
@@ -41,10 +41,10 @@ router.beforeEach((to) => {
   if (to.name === 'login' && token) {
     return '/'
   }
-  if (to.meta.requiresSuperAdmin) {
+  if (to.meta.requiresRolesAdmin) {
     const role = localStorage.getItem('role')
 
-    if (role !== 'SUPER_ADMIN') {
+    if (role !== 'ROLES_ADMIN') {
       return '/'
     }
   }

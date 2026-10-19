@@ -4,7 +4,7 @@ const token = ref(localStorage.getItem('token'))
 const role = ref(localStorage.getItem('role'))
 
 export const isLoggedIn = computed(() => !!token.value)
-export const isSuperAdmin = computed(() => role.value === 'SUPER_ADMIN')
+export const isRolesAdmin = computed(() => role.value === 'ROLES_ADMIN')
 
 export function login(newToken: string, newRole: string) {
   localStorage.setItem('token', newToken)

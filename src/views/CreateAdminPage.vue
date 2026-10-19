@@ -6,7 +6,7 @@ const apiBase = import.meta.env.VITE_ADMIN_API_BASE_URL;
 const router = useRouter();
 const email = ref("");
 const password = ref("");
-const role = ref<"ADMIN" | "SUPER_ADMIN">("ADMIN");
+const role = ref<"INDEX_ADMIN" | "ROLES_ADMIN">("INDEX_ADMIN");
 
 async function createAdmin() {
   const token = localStorage.getItem("token");
@@ -39,7 +39,7 @@ async function createAdmin() {
 
 <template>
   <el-card style="max-width:400px;margin:auto;">
-    <h2>Create New Admin</h2>
+    <h2>Create New Index Admin</h2>
 
     <el-input
       v-model="email"
@@ -54,16 +54,16 @@ async function createAdmin() {
     <br><br>
     <el-select
       v-model="role"
-      placeholder="Select role"
+      placeholder="Select account role"
       style="width: 100%;"
     >
       <el-option
-        label="Admin"
-        value="ADMIN"
+        label="Index Admin"
+        value="INDEX_ADMIN"
       />
       <el-option
-        label="Super Admin"
-        value="SUPER_ADMIN"
+        label="Roles Admin"
+        value="ROLES_ADMIN"
       />
     </el-select>
     <br><br>
