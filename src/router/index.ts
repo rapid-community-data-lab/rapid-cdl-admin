@@ -13,6 +13,14 @@ const routes = [
     },
   },
   {
+    path: '/ingest',
+    name: 'ingest',
+    component: () => import('@/views/IngestPage.vue'),
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
     path: "/create-admin",
     name: "create-admin",
     component: CreateAdminPage,

@@ -1,0 +1,37 @@
+name: rapid-cdl-data-ingester
+
+networks:
+  rapid-community-data-lab:
+    external: true
+    name: rapid-community-data-lab
+
+volumes:
+  state:
+
+services:
+  data-ingester:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rapid-cdl-data-ingester:local
+    container_name: data-ingester
+    hostname: data-ingester
+    environment:
+      API_AUTH_JWT_SECRET: "${API_AUTH_JWT_SECRET:?Set API_AUTH_JWT_SECRET in data-ingester/.env}"
+      LAB_API_URL: "${LAB_API_URL:-http://api:8080}"
+      OCFL_PATH: /data/ocfl/data
+      INGEST_WORK_DIR: /data/ocfl/scratch/data-ingester
+      INGEST_STATE_DIR: /var/lib/data-ingester
+      ALLOW_PRIVATE_URLS: "${ALLOW_PRIVATE_URLS:-false}"
+      ALLOWED_DOWNLOAD_HOSTS: "${ALLOWED_DOWNLOAD_HOSTS:-}"
+      MIN_FREE_BYTES: "${MIN_FREE_BYTES:-4294967296}"
+      MIN_FREE_PERCENT: "${MIN_FREE_PERCENT:-15}"
+      KEEP_ARCHIVES: "${KEEP_ARCHIVES:-false}"
+    volumes:
+      - "${OCFL_HOST_DIR:-../../rapid-community-data-lab-api/.ocfl}:/data/ocfl"
+      - state:/var/lib/data-ingester
+    ports:
+      - "8084:8084"
+    networks:
+      - rapid-community-data-lab

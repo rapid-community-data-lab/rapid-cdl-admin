@@ -248,16 +248,23 @@ const filterNode: FilterNodeMethodFunction = (value: string, data: TreeNodeData)
 
 <template>
   <div class="page-container">
-    <p v-if="errorMessage" style="color:red">
+    <header class="page-head">
+      <p class="eyebrow">Repository</p>
+      <h1>Collections</h1>
+      <p class="lead">Load the collections stored in the OCFL repository and manage their portal index.</p>
+    </header>
+
+    <section class="panel">
+    <p v-if="errorMessage" class="message message--error">
       {{ errorMessage }}
     </p>
 
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <div class="toolbar">
       <el-button type="primary" @click="fetchCollections">
         Load Collections
       </el-button>
 
-      <div style="display:flex; gap:10px;">
+      <div class="toolbar__group">
         <el-button type="success" @click="indexAll">
           Index All
         </el-button>
@@ -268,11 +275,11 @@ const filterNode: FilterNodeMethodFunction = (value: string, data: TreeNodeData)
       </div>
     </div>
 
-    <p v-if="statusMessage" :style="{ color: statusType === 'success' ? 'green' : 'red', fontWeight: 'bold' }">
+    <p v-if="statusMessage" class="message" :class="statusType === 'success' ? 'message--success' : 'message--error'">
       {{ statusMessage }}
     </p>
     <template v-if="collections.length">
-      <el-input v-model="filterText" class="w-60 mb-2" placeholder="Filter keyword" />
+      <el-input v-model="filterText" class="filter" placeholder="Filter keyword" clearable />
       <el-tree ref="treeRef" :data="collections" node-key="id" :filter-node-method="filterNode">
         <template #default="{ data }">
           <div class="tree-row">
@@ -304,15 +311,82 @@ const filterNode: FilterNodeMethodFunction = (value: string, data: TreeNodeData)
         </template>
       </el-tree>
     </template>
+    <el-empty
+      v-else-if="!errorMessage"
+      description="Select Load Collections to list the repository."
+      :image-size="70"
+    />
+    </section>
   </div>
 </template>
 
 
 <style scoped>
 .page-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.page-head h1 {
+  margin: 0;
+  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+  line-height: 1.15;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  color: var(--rapid-accent);
+  font-weight: 700;
+}
+
+.lead {
+  margin: 8px 0 0;
+  color: var(--rapid-muted);
+}
+
+.panel {
+  background: var(--rapid-surface);
+  border: 1px solid var(--rapid-border);
+  border-radius: var(--rapid-radius);
+  box-shadow: var(--rapid-shadow);
+  padding: 20px;
+  min-width: 0;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.toolbar__group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.message {
+  font-weight: bold;
+}
+
+.message--success {
+  color: #1f7a3d;
+}
+
+.message--error {
+  color: #b42318;
+}
+
+.filter {
+  max-width: 360px;
+  margin-bottom: 12px;
 }
 
 .navbar {
@@ -348,11 +422,27 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   width: 100%;
+  min-width: 0;
 }
 
 .tree-label {
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .tree-label-id {
+    display: none;
+  }
+
+  .el-button {
+    min-width: 0;
+  }
 }
 
 .tree-label-id {

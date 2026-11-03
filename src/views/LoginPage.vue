@@ -49,7 +49,7 @@ async function login() {
 </script>
 
 <template>
-  <el-card style="max-width:400px;margin:auto;">
+  <el-card class="auth-card">
     <h2>Login</h2>
     <el-input
       v-model="email"

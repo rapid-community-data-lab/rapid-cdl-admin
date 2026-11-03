@@ -38,7 +38,7 @@ async function createAdmin() {
 </script>
 
 <template>
-  <el-card style="max-width:400px;margin:auto;">
+  <el-card class="auth-card">
     <h2>Create New Index Admin</h2>
 
     <el-input

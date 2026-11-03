@@ -8,6 +8,17 @@ http:
       service: admin-api
       middlewares: ["strip-admin-api"]
       priority: 110
+    ingest-api:
+      rule: "PathPrefix(`/ingest-api`)"
+      entryPoints: ["web"]
+      service: ingest-api
+      middlewares: ["strip-ingest-api"]
+      priority: 120
+    admin:
+      rule: "PathPrefix(`/`)"
+      entryPoints: ["web"]
+      service: admin
+      priority: 1
     api:
       rule: "PathPrefix(`/api`)"
       entryPoints: ["web"]
@@ -18,6 +29,9 @@ http:
     strip-admin-api:
       stripPrefix:
         prefixes: ["/admin-api"]
+    strip-ingest-api:
+      stripPrefix:
+        prefixes: ["/ingest-api"]
     strip-api:
       stripPrefix:
         prefixes: ["/api"]
@@ -26,6 +40,14 @@ http:
       loadBalancer:
         servers:
           - url: "http://admin-api:8083"
+    ingest-api:
+      loadBalancer:
+        servers:
+          - url: "http://data-ingester:8084"
+    admin:
+      loadBalancer:
+        servers:
+          - url: "http://admin:80"
     api:
       loadBalancer:
         servers:

@@ -21,15 +21,12 @@ services:
     image: traefik:v3.3
     container_name: rapid-cdl-traefik
     command:
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false
       - --providers.file.filename=/etc/traefik/dynamic.yml
       - --entrypoints.web.address=:80
     ports:
       # Same host port the old nginx admin used, so existing links keep working.
       - "8082:80"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
     networks:
       - rapid-community-data-lab
@@ -42,15 +39,9 @@ services:
       args:
         VITE_API_BASE_URL: "/api"
         VITE_ADMIN_API_BASE_URL: "/admin-api"
+        VITE_INGEST_API_BASE_URL: "/ingest-api"
     image: rapid-cdl-admin:local
     container_name: admin
-    labels:
-      - traefik.enable=true
-      # Catch-all (lowest priority); the /api router below wins for /api/*.
-      - traefik.http.routers.admin.rule=PathPrefix(`/`)
-      - traefik.http.routers.admin.entrypoints=web
-      - traefik.http.routers.admin.priority=1
-      - traefik.http.services.admin.loadbalancer.server.port=80
     networks:
       - rapid-community-data-lab
     restart: unless-stopped

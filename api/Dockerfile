@@ -27,6 +27,7 @@ COPY --from=build /app/package.json ./
 COPY --from=build /app/tsconfig.json ./
 COPY docker/entrypoint.sh /entrypoint.sh
 COPY docker/ensure-schema.mjs /app/ensure-schema.mjs
+COPY docker/create-admin-user.mjs /app/create-admin-user.mjs
 RUN chmod +x /entrypoint.sh
 
 EXPOSE 8083

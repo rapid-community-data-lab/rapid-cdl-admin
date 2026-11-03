@@ -30,6 +30,17 @@ jobs:
           echo "name=${REGISTRY}/$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
           echo "tag=sha-$(git rev-parse --short=7 HEAD)" >> "$GITHUB_OUTPUT"
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Test data ingester
+        working-directory: data-ingester
+        run: |
+          python -m pip install -r requirements-dev.txt
+          python -m pytest -q
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -69,8 +80,21 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Build and push data ingester
+        uses: docker/build-push-action@v6
+        with:
+          context: ./data-ingester
+          file: ./data-ingester/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ghcr.io/rapid-community-data-lab/rapid-cdl-data-ingester:${{ steps.img.outputs.tag }}
+            ghcr.io/rapid-community-data-lab/rapid-cdl-data-ingester:latest
+          cache-from: type=gha,scope=data-ingester
+          cache-to: type=gha,mode=max,scope=data-ingester
+
       - name: Dispatch deploy-production to GitOps repo
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main'
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.INFRA_DISPATCH_TOKEN }}
@@ -79,7 +103,12 @@ jobs:
           client-payload: |
             {
               "image": "${{ steps.img.outputs.name }}",
-              "tag": "${{ steps.img.outputs.tag }}"
+              "tag": "${{ steps.img.outputs.tag }}",
+              "images": [
+                { "image": "${{ steps.img.outputs.name }}", "tag": "${{ steps.img.outputs.tag }}" },
+                { "image": "ghcr.io/rapid-community-data-lab/rapid-cdl-admin-api", "tag": "${{ steps.img.outputs.tag }}" },
+                { "image": "ghcr.io/rapid-community-data-lab/rapid-cdl-data-ingester", "tag": "${{ steps.img.outputs.tag }}" }
+              ]
             }
 
       - name: Install kustomize

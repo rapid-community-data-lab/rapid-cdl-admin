@@ -12,10 +12,17 @@ The frontend ships its own self-contained Docker image (`docker/Dockerfile`):
 a multi-stage build that compiles the Vue SPA and serves it with **Caddy**
 (static files only — no in-container proxy). The local stack in
 [`docker/docker-compose.yml`](docker/docker-compose.yml) runs a small **Traefik**
-edge that routes `/api/*` to the backend and everything else to the Caddy admin —
+edge (routes in [`docker/traefik/dynamic.yml`](docker/traefik/dynamic.yml)) that sends
+`/api/*` to the portal API, `/admin-api/*` to the admin API, `/ingest-api/*` to the
+[data ingester](data-ingester/README.md) and everything else to the Caddy admin —
 mirroring the K3s setup, where the cluster Traefik does the same. The browser
-bundle calls same-origin `/api/*` (baked at build via `VITE_API_BASE_URL=/api`),
+bundle calls same-origin paths (baked at build via `VITE_API_BASE_URL=/api`,
+`VITE_ADMIN_API_BASE_URL=/admin-api`, `VITE_INGEST_API_BASE_URL=/ingest-api`),
 so the same image runs locally and on K3s unchanged.
+
+The **Ingest Data** page downloads zipped RO-Crates from portal links (single or
+split parts) or takes uploaded zips, then assembles, imports into OCFL and indexes
+them through the data ingester, with resumable downloads and uploads.
 
 ***If the Docker network and backend are already up (e.g. from oni-ui), skip steps 1–2.***
 
@@ -43,13 +50,35 @@ Both `docker/docker-compose.yml` (this project) and
 
 ### 3. Start the backend stack
 
+Start postgres + opensearch + api:
+
 ```bash
 cd ../rapid-community-data-lab-api
 docker compose up -d        # postgres + opensearch + api
 curl -s http://localhost:8080/version
+```
 
-# In another terminal, start the admin API on the shared Docker network.
+The admin API keeps its accounts in its own database (as in production), so the
+portal API's Prisma schema never conflicts with the admin role enum. Create it once:
+
+```bash
+docker exec db sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "CREATE DATABASE rapid_cdl_admin"'
+```
+
+Start the admin API on the shared Docker network. `api/.env` (copy `api/env.default`)
+needs `DB_NAME=rapid_cdl_admin`, `DB_USER`, `DB_PASSWORD`, `PORT=8083` and the shared
+`API_AUTH_JWT_SECRET`:
+
+```bash
 cd ../rapid-cdl-admin/api
+docker compose up -d --build
+```
+
+Start the data ingester (`data-ingester/.env` from `data-ingester/env.default`, with the
+same `API_AUTH_JWT_SECRET`):
+
+```bash
+cd ../data-ingester
 docker compose up -d --build
 ```
 
@@ -62,13 +91,23 @@ docker compose --env-file .env -f docker/docker-compose.yml up -d --build
 
 This builds `rapid-cdl-admin:local` (Caddy static SPA) and starts a local Traefik
 that publishes on host port **8082**, routing `/api/*` to lab-api,
-`/admin-api/*` to admin-api, and `/` to the admin.
+`/admin-api/*` to admin-api, `/ingest-api/*` to the data ingester, and `/` to the admin.
+All routes come from the file provider, so Traefik needs no Docker socket.
 
-### 5. Verify
+### 5. Create the first admin account
+
+A fresh admin database has no accounts. Create one (the password prompt is hidden):
+
+```bash
+docker exec -it admin-api node /app/create-admin-user.mjs
+```
+
+### 6. Verify
 
 ```bash
 curl -s http://localhost:8082/api/version            # Traefik → backend
 curl -s http://localhost:8082/admin-api/health       # Traefik → admin-api
+curl -s http://localhost:8082/ingest-api/health      # Traefik → data ingester
 curl -s -o /dev/null -w '%{http_code}\n' http://localhost:8082/   # SPA → 200
 open http://localhost:8082                           # SPA in browser Mac
 explorer.exe http://localhost:8082                   # SPA in browser Windows WSL2
@@ -76,14 +115,16 @@ explorer.exe http://localhost:8082                   # SPA in browser Windows WS
 
 You should see `{"version":"1.0.0"}` from the backend call routed through Traefik.
 
-### 6. Tear down
+### 7. Tear down
 
 ```bash
 docker compose -f docker/docker-compose.yml down
+(cd data-ingester && docker compose down)
+(cd api && docker compose down)
 cd ../rapid-community-data-lab-api && docker compose down
-# Optional: remove the shared network
-docker network rm rapid-community-data-lab
 ```
+
+Optionally remove the shared network with `docker network rm rapid-community-data-lab`.
 
 ## Developer mode for set up
 

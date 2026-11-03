@@ -1,9 +1,35 @@
 :root {
   --rapid-text-color: #3e0323;
+  --rapid-brand: #3e0323;
+  --rapid-brand-50: #f6eff2;
+  --rapid-brand-200: #d8c3cd;
+  --rapid-accent: #146472;
+  --rapid-bg: #f7f5f6;
+  --rapid-surface: #ffffff;
+  --rapid-border: #e8e2e5;
+  --rapid-muted: #6e5a64;
+  --rapid-radius: 16px;
+  --rapid-radius-sm: 12px;
+  --rapid-shadow: 0 1px 2px rgba(62, 3, 35, 0.05), 0 10px 30px rgba(62, 3, 35, 0.06);
+  --rapid-max-width: 1320px;
   --el-font-family: "Times New Roman", Times, serif;
   --el-text-color-primary: var(--rapid-text-color);
   --el-text-color-regular: var(--rapid-text-color);
-  --el-text-color-secondary: var(--rapid-text-color);
+  --el-text-color-secondary: var(--rapid-muted);
+  --el-color-primary: #3e0323;
+  --el-color-primary-light-3: #784f65;
+  --el-color-primary-light-5: #9f8191;
+  --el-color-primary-light-7: #c5b3bd;
+  --el-color-primary-light-8: #d8cdd3;
+  --el-color-primary-light-9: #ece6e9;
+  --el-color-primary-dark-2: #32021c;
+  --el-border-radius-base: 10px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body,
@@ -11,13 +37,39 @@ body * {
   font-family: "Times New Roman", Times, serif;
 }
 
+code,
+code * {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
 body {
   color: var(--rapid-text-color);
+  background: var(--rapid-bg);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--rapid-brand);
+  letter-spacing: -0.01em;
 }
 
 .el-button {
-  color: var(--rapid-text-color);
   font-family: "Times New Roman", Times, serif;
+}
+
+.el-button:not(.el-button--primary, .el-button--success, .el-button--danger, .el-button--warning, .el-button--info),
+.el-button.is-plain,
+.el-button.is-link,
+.el-button.is-text {
+  color: var(--rapid-text-color);
+}
+
+.el-button--danger.is-plain,
+.el-button--danger.is-link {
+  color: var(--el-color-danger);
 }
 
 .el-button.is-disabled,
@@ -25,4 +77,30 @@ body {
   background-color: #d1d5db;
   border-color: #d1d5db;
   color: #4b5563;
+}
+
+.el-button.is-link.is-disabled,
+.el-button.is-text.is-disabled {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.el-card {
+  border-radius: var(--rapid-radius);
+  border-color: var(--rapid-border);
+  box-shadow: var(--rapid-shadow);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  margin: clamp(16px, 6vh, 64px) auto;
+}
+
+.auth-card h2 {
+  margin-top: 0;
+}
+
+.auth-card .el-button {
+  width: 100%;
 }

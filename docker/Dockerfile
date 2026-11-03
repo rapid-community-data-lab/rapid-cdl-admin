@@ -11,8 +11,10 @@ COPY . .
 # Build-time API config baked into the static bundle (Vite import.meta.env).
 ARG VITE_API_BASE_URL=/api
 ARG VITE_ADMIN_API_BASE_URL=/admin-api
+ARG VITE_INGEST_API_BASE_URL=/ingest-api
 ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
 ENV VITE_ADMIN_API_BASE_URL=${VITE_ADMIN_API_BASE_URL}
+ENV VITE_INGEST_API_BASE_URL=${VITE_INGEST_API_BASE_URL}
 
 RUN npm run build
 

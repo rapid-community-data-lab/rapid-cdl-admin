@@ -1,0 +1,10 @@
+.env
+.env.*
+!env.default
+.git
+.pytest_cache
+__pycache__
+**/__pycache__
+*.pyc
+tests
+.venv

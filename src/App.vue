@@ -7,9 +7,9 @@ import FooterBar from '@/components/Footer.vue'
   <div class="layout">
     <NavBar />
 
-    <div class="content">
+    <main class="content">
       <router-view />
-    </div>
+    </main>
 
     <FooterBar />
   </div>
@@ -26,6 +26,15 @@ body {
 }
 .content {
   flex: 1;
-  padding: 16px;
+  width: 100%;
+  max-width: var(--rapid-max-width);
+  margin: 0 auto;
+  padding: 28px 20px 48px;
+  box-sizing: border-box;
+}
+@media (max-width: 640px) {
+  .content {
+    padding: 20px 14px 36px;
+  }
 }
 </style>
