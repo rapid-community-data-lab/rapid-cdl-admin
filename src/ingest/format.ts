@@ -17,17 +17,33 @@ export function percent(done: number, total: number | null | undefined): number 
   return Math.max(0, Math.min(100, Math.floor((done / total) * 100)))
 }
 
+export const displayTimeZone = 'Australia/Brisbane'
+export const displayTimeZoneLabel = 'AEST'
+
+const dateTimeFormat = new Intl.DateTimeFormat('en-AU', {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+  timeZone: displayTimeZone,
+})
+
+const clockFormat = new Intl.DateTimeFormat('en-AU', {
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  timeZone: displayTimeZone,
+})
+
 export function formatTime(value: string | null | undefined): string {
   if (!value) return ''
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return value
-  return date.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+  return `${dateTimeFormat.format(date)} ${displayTimeZoneLabel}`
 }
 
 export function clock(value: string): string {
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return value
-  return date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+  return `${clockFormat.format(date)} ${displayTimeZoneLabel}`
 }
 
 export function naturalCompare(a: string, b: string): number {

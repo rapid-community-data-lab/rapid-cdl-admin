@@ -437,7 +437,7 @@ onBeforeUnmount(() => {
         </el-table-column>
         <el-table-column prop="head" label="OCFL version" width="120" />
         <el-table-column prop="files" label="Files" width="90" />
-        <el-table-column label="Updated" min-width="170">
+        <el-table-column label="Updated" min-width="200">
           <template #default="{ row }">{{ formatTime(row.updated) }}</template>
         </el-table-column>
       </el-table>

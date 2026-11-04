@@ -434,13 +434,14 @@ function indexText(crate: Job['crates'][number]): string {
 
 .job__log li {
   display: grid;
-  grid-template-columns: 72px 1fr;
+  grid-template-columns: max-content 1fr;
   gap: 8px;
 }
 
 .job__log time {
   color: var(--rapid-muted);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .job__actions {
