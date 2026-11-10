@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import IndexPage from '@/views/IndexPage.vue'
-import CreateAdminPage from '@/views/CreateAdminPage.vue'
+import ManageAdminPage from '@/views/CreateAdminPage.vue'
 import LoginPage from "@/views/LoginPage.vue";
 
 const routes = [
@@ -21,9 +21,9 @@ const routes = [
     },
   },
   {
-    path: "/create-admin",
-    name: "create-admin",
-    component: CreateAdminPage,
+    path: "/manage-admin",
+    name: "manage-admin",
+    component: ManageAdminPage,
     meta: {
       requiresAuth: true,
       requiresRolesAdmin: true,

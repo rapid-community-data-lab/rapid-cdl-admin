@@ -53,11 +53,11 @@ function logout() {
         </router-link>
         <router-link
           v-if="isLoggedIn && isRolesAdmin"
-          to="/create-admin"
+          to="/manage-admin"
           class="app-nav__link"
           active-class="is-active"
         >
-          Create Index Admin
+          Manage Admins
         </router-link>
         <router-link v-if="!isLoggedIn" to="/login" class="app-nav__link" active-class="is-active">Login</router-link>
         <button v-if="isLoggedIn" type="button" class="app-nav__link app-nav__button" @click="logout">Logout</button>
